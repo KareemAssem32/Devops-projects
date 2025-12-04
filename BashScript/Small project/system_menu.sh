@@ -40,7 +40,7 @@ case $num in
 	5)
 		echo "Disk Usage"
 		echo "----------"
-		echo " $(df) "
+		echo " $(df -h) "
 		;;
 	6) 
 		exit 0
