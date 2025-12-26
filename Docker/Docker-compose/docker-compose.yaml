@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  ssh-server:
+    build: .
+    container_name: ssh-server
+      
+  ssh-client: 
+    build: .
+    container_name: ssh-client
