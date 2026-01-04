@@ -2,24 +2,20 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: frontend-rs
-  labels:
-    app: nginx
-    tier: frontend
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nginx
-      tier: frontend
+      app: frontend-rs
   template:
     metadata:
+      name: forntend
       labels:
         app: nginx
-        tier: frontend
     spec:
       containers:
         - name: frontend
-          image: nginx
+          image: kareem32/app-test:1.0.0
           ports:
             - containerPort: 80
 
