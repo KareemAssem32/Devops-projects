@@ -1,21 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deploy
-  labels:
-    app: nginx
+  name: app32
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: app32
   template:
     metadata:
       labels:
-        app: nginx
+        app: app32
     spec:
       containers:
-        - name: frontend-web
+        - name: frontend
           image: kareem32/app-test:1.0.0
           ports:
             - containerPort: 80

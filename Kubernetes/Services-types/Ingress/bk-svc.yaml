@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dns
-  labels:
-    app: nginx
+  name: backend-svc
 spec:
+  type: ClusterIP
   selector:
-    app: nginx
+    app: backend
   ports:
     - port: 80
       targetPort: 80

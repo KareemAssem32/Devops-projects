@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deploy
-  labels:
-    app: nginx
+  name: backend-deploy
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nginx
+      app: backend
   template:
     metadata:
       labels:
-        app: nginx
+        app: backend
     spec:
       containers:
-        - name: frontend-web
-          image: kareem32/app-test:1.0.0
+        - name: backend
+          image: hashicorp/http-echo
+          args:
+            - "-text=Hello from backend"
           ports:
             - containerPort: 80
