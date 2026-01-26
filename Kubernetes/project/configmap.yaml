@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: project
+data:
+  DB_NAME: learning_platform
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  BACKEND_URL: http://backend:8000
