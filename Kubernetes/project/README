@@ -2,12 +2,12 @@
 
 ## 📌 Project Overview
 
-This project demonstrates deploying a **full‑stack application** on **Kubernetes** using best DevOps practices.
+This project demonstrates deploying a **full‑stack application** on **Kubernetes** using best DevOps practices.\
 The application consists of:
 
-* **Frontend** application
-* **Backend API**
-* **PostgreSQL database**
+- **Frontend** application
+- **Backend API**
+- **PostgreSQL database**
 
 All components are deployed inside Kubernetes using different objects such as **Deployments, StatefulSets, Services, ConfigMaps, Secrets, Ingress, PVC, StorageClass, and RBAC‑ready structure**.
 
@@ -39,57 +39,57 @@ PostgreSQL Service ──► PostgreSQL Pod (StatefulSet + PVC)
 
 ### 1️⃣ Backend
 
-* **backend-deployment.yaml**
+- **backend-deployment.yaml**\
   Deploys the backend API using a Kubernetes Deployment with multiple replicas.
 
-* **backend-svc.yaml**
+- **backend-svc.yaml**\
   Exposes the backend internally using a ClusterIP service.
 
 ---
 
 ### 2️⃣ Frontend
 
-* **frontend-deployment.yaml**
+- **frontend-deployment.yaml**\
   Deploys the frontend application using a Kubernetes Deployment.
 
-* **frontend-svc.yaml**
+- **frontend-svc.yaml**\
   Exposes the frontend internally to be used by Ingress.
 
 ---
 
 ### 3️⃣ Database (PostgreSQL)
 
-* **statefulset.yaml**
+- **statefulset.yaml**\
   Deploys PostgreSQL as a StatefulSet to ensure stable network identity and persistent storage.
 
-* **service.yaml**
+- **service.yaml**\
   Headless service for PostgreSQL communication.
 
 ---
 
 ### 4️⃣ Configuration & Secrets
 
-* **configmap.yaml**
+- **configmap.yaml**\
   Stores non‑sensitive configuration data (environment variables).
 
-* **secret.yaml**
+- **secret.yaml**\
   Stores sensitive information such as database credentials.
 
 ---
 
 ### 5️⃣ Storage
 
-* **storageclass.yaml**
+- **storageclass.yaml**\
   Defines a custom StorageClass (Rancher‑compatible / Minikube supported).
 
-* **pvc.yaml**
+- **pvc.yaml**\
   PersistentVolumeClaim used by PostgreSQL for data persistence.
 
 ---
 
 ### 6️⃣ Networking
 
-* **ingress.yaml**
+- **ingress.yaml**\
   Exposes the application externally using Ingress and routes traffic to frontend and backend services.
 
 ---
@@ -159,41 +159,41 @@ http://<MINIKUBE_IP>
 
 ## ✅ Kubernetes Concepts Used
 
-* Deployments
-* StatefulSets
-* Services (ClusterIP & Headless)
-* ConfigMaps
-* Secrets
-* Persistent Volumes & PVC
-* StorageClass
-* Ingress
-* Namespace Isolation
+- Deployments
+- StatefulSets
+- Services (ClusterIP & Headless)
+- ConfigMaps
+- Secrets
+- Persistent Volumes & PVC
+- StorageClass
+- Ingress
+- Namespace Isolation
 
 ---
 
 ## 🎯 Learning Outcomes
 
-* Containerized full‑stack application
-* Kubernetes production‑like setup
-* Persistent database handling
-* Secure configuration management
-* Ingress‑based traffic routing
+- Containerized full‑stack application
+- Kubernetes production‑like setup
+- Persistent database handling
+- Secure configuration management
+- Ingress‑based traffic routing
 
 ---
 
 ## 📌 Notes
 
-* This project is designed for **learning and practice purposes**.
-* Can be extended with:
-
-  * HPA
-  * Network Policies
-  * Resource Limits
-  * Liveness & Readiness Probes
+- This project is designed for **learning and practice purposes**.
+- Can be extended with:
+  - HPA
+  - Network Policies
+  - Resource Limits
+  - Liveness & Readiness Probes
 
 ---
 
 ## 👨‍💻 Author
 
-**Kareem Assem**
-DevOps / Cloud Engineer
+**Kareem Assem**\
+DevOps Eng
+
