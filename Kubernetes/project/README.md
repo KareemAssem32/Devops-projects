@@ -155,6 +155,14 @@ Then open in browser:
 http://<MINIKUBE_IP>
 ```
 
+If you want to use the hostnames defined in `ingress.yaml` (digilians.local and api.digilians.local), add them to your `/etc/hosts` mapped to the Minikube IP. Example:
+
+```bash
+echo "$(minikube ip) digilians.local api.digilians.local" | sudo tee -a /etc/hosts
+```
+
+If your images are private, create an image pull secret and reference it in the deployments before applying manifests.
+
 ---
 
 ## ✅ Kubernetes Concepts Used

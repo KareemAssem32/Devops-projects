@@ -18,10 +18,8 @@ spec:
       labels:
         app: frontend
     spec:     
-      imagePullSecrets:
-      - name: regcred1
       containers:
       - name: frontend
-        image: kareem32/projects:frontend
+        image: kareem32/app-test:frontend
         ports:
           - containerPort: 80

@@ -7,4 +7,4 @@ data:
   DB_NAME: learning_platform
   DB_HOST: postgres
   DB_PORT: "5432"
-  BACKEND_URL: http://backend:8000
+  BACKEND_URL: http://backend-svc:8000

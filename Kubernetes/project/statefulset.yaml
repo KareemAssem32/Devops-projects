@@ -41,7 +41,7 @@ spec:
       name: postgres-storage
     spec:
       accessModes: ["ReadWriteOnce"]
-      storageClassName: rancher-storage
+      storageClassName: standard
       resources:
         requests:
           storage: 1Gi
