@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: my-emptydir
+      mountPath: /data/empty
+    - name: my-hostpath
+      mountPath: /data/host
+  volumes:
+  - name: my-emptydir
+    emptyDir: {}
+  - name: my-hostpath
+    hostPath:
+      path: /tmp/hostpath-test
+      type: DirectoryOrCreate
