@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpu-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpu-demo
+  template:
+    metadata:
+      labels:
+        app: cpu-demo
+    spec:
+      containers:
+      - name: cpu-demo
+        image: busybox
+        command: ["sh", "-c", "while true; do :; done"]
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m"
