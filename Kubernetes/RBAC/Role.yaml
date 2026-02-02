@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: dev
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+
+  #Kareem Requires a role that allows him to read pods in the dev namespace

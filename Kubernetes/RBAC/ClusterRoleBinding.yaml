@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pod-reader-global-binding
+subjects:
+- kind: User
+  name: kareem
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: pod-reader-global
+  apiGroup: rbac.authorization.k8s.io
+
+#Administrator: Create a ClusterRoleBinding that binds the "pod-reader-global" ClusterRole to the user "Kareem".
