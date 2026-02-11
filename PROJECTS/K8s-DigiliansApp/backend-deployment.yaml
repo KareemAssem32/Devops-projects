@@ -18,6 +18,10 @@ spec:
       labels:
         app: backend
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.35
+          command: ['sh', '-c', 'until nc -z db 5432; do echo waiting for postgres...; sleep 2; done;']
       containers:
         - name: backend-pod
           image: kareem32/app-test:backend
@@ -27,29 +31,23 @@ spec:
             - name: DATABASE_URL
               value: postgresql://admin:admin123@db:5432/learning_platform
             - name: DB_HOST
-              value: "postgres"
+              value: "db"
             - name: DB_PORT
-              value: "5432"
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_PORT_5432_TCP
-              value: "5432"
-            - name: POSTGRES_PORT_5432_TCP_ADDR
-              value: "postgres"
-            - name: POSTGRES_PORT_5432_TCP_PORT
               value: "5432"
 
           livenessProbe:
             tcpSocket:
               port: 8000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
+            failureThreshold: 3
 
           readinessProbe:
             tcpSocket:
               port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            failureThreshold: 3
 
           resources:
             requests:

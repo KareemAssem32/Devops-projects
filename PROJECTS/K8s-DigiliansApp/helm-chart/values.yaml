@@ -1,0 +1,101 @@
+# Global settings
+namespace: project
+environment: production
+
+# Backend settings
+backend:
+  name: backend
+  replicaCount: 2
+  image:
+    repository: kareem32/app-test
+    tag: backend
+    pullPolicy: IfNotPresent
+  port: 8000
+  env:
+    DATABASE_URL: postgresql://admin:admin123@db:5432/learning_platform
+    DB_HOST: db
+    DB_PORT: "5432"
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    failureThreshold: 3
+
+# Frontend settings
+frontend:
+  name: frontend
+  replicaCount: 2
+  image:
+    repository: kareem32/app-test
+    tag: frontend
+    pullPolicy: IfNotPresent
+  port: 80
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 80
+    nodePort: 30681
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+# Database (PostgreSQL) settings
+postgres:
+  name: postgres
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 15-alpine
+    pullPolicy: IfNotPresent
+  port: 5432
+  service:
+    type: ClusterIP
+    headlessService: false
+  storage:
+    size: 1Gi
+    storageClassName: standard
+    accessMode: ReadWriteOnce
+
+# ConfigMap
+configMap:
+  name: app-config
+  DB_NAME: learning_platform
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  BACKEND_URL: http://backend-svc:8000
+
+# Secret
+secret:
+  name: db-secret
+  DB_USER: admin
+  DB_PASSWORD: admin123
+
+# Ingress
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: learning-platform.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

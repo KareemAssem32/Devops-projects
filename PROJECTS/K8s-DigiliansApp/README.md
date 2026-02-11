@@ -96,25 +96,62 @@ PostgreSQL Service ──► PostgreSQL Pod (StatefulSet + PVC)
 
 ## 🚀 How to Run the Project (Minikube)
 
-### 1️⃣ Start Minikube
+### Option 1: Using Helm (Recommended) ⭐
+
+#### 1️⃣ Start Minikube
+```bash
+minikube start
+```
+
+#### 2️⃣ Create Namespace (optional, Helm can create it)
+```bash
+kubectl create namespace project
+```
+
+#### 3️⃣ Install using Helm
+```bash
+helm install learning-platform helm-chart/ -n project --create-namespace
+```
+
+#### 4️⃣ Verify Installation
+```bash
+helm list -n project
+kubectl get all -n project
+```
+
+#### 5️⃣ Upgrade (if needed)
+```bash
+helm upgrade learning-platform helm-chart/ -n project
+```
+
+#### 6️⃣ Uninstall
+```bash
+helm uninstall learning-platform -n project
+```
+
+---
+
+### Option 2: Using kubectl (Manual)
+
+#### 1️⃣ Start Minikube
 
 ```bash
 minikube start
 ```
 
-### 2️⃣ Enable Ingress
+#### 2️⃣ Enable Ingress
 
 ```bash
 minikube addons enable ingress
 ```
 
-### 3️⃣ Create Namespace
+#### 3️⃣ Create Namespace
 
 ```bash
 kubectl create namespace project
 ```
 
-### 4️⃣ Apply Kubernetes Manifests
+#### 4️⃣ Apply Kubernetes Manifests
 
 ```bash
 kubectl apply -n project -f storageclass.yaml
@@ -133,6 +170,15 @@ kubectl apply -n project -f ingress.yaml
 ---
 
 ## 🔍 Verify Deployment
+
+### Using Helm
+
+```bash
+helm status learning-platform -n project
+helm list -n project
+```
+
+### Using kubectl
 
 ```bash
 kubectl get all -n project
@@ -165,43 +211,220 @@ If your images are private, create an image pull secret and reference it in the 
 
 ---
 
+## 📦 Helm Chart
+
+The project includes a **production-ready Helm Chart** for easy deployment and management.
+
+### Helm Chart Structure
+
+```
+helm-chart/
+├── Chart.yaml                      # Chart metadata
+├── values.yaml                     # Default values
+└── templates/
+    ├── namespace.yaml
+    ├── configmap.yaml
+    ├── secret.yaml
+    ├── nginx-configmap.yaml
+    ├── frontend-deployment.yaml
+    ├── frontend-service.yaml
+    ├── backend-deployment.yaml
+    ├── backend-service.yaml
+    ├── postgres-statefulset.yaml
+    ├── postgres-service.yaml
+    └── postgres-headless-service.yaml
+```
+
+### Customizing Helm Values
+
+Edit `helm-chart/values.yaml` to customize:
+
+```yaml
+# Replicas
+backend.replicaCount: 2
+frontend.replicaCount: 2
+postgres.replicaCount: 1
+
+# Images
+backend.image.tag: backend
+frontend.image.tag: frontend
+
+# Resource limits
+backend.resources.limits.memory: 512Mi
+frontend.resources.limits.memory: 256Mi
+
+# Database credentials
+secret.DB_USER: admin
+secret.DB_PASSWORD: admin123
+
+# Port configuration
+frontend.service.nodePort: 30681
+```
+
+### Useful Helm Commands
+
+```bash
+# Lint chart for errors
+helm lint helm-chart/
+
+# Dry-run (preview changes)
+helm install learning-platform helm-chart/ -n project --dry-run
+
+# View rendered templates
+helm template learning-platform helm-chart/ -n project
+
+# Check values being used
+helm values learning-platform -n project
+
+# Get release history
+helm history learning-platform -n project
+
+# Rollback to previous version
+helm rollback learning-platform 1 -n project
+```
+
+---
+
 ## ✅ Kubernetes Concepts Used
 
-- Deployments
-- StatefulSets
-- Services (ClusterIP & Headless)
-- ConfigMaps
-- Secrets
-- Persistent Volumes & PVC
-- StorageClass
-- Ingress
+- Deployments with RollingUpdate strategy
+- StatefulSets with PersistentVolumes
+- Services (ClusterIP, Headless, NodePort)
+- ConfigMaps for configuration management
+- Secrets for sensitive data
+- Init Containers for dependency management
+- Persistent Volumes & PersistentVolumeClaims
+- StorageClass for dynamic provisioning
+- Ingress for external access
 - Namespace Isolation
+- Liveness & Readiness Probes
+- Resource Requests & Limits
+- Helm Charts for package management
+
+---
+
+## 🐛 Troubleshooting
+
+### Backend Pod Crashing (CrashLoopBackOff)
+
+**Problem:** Backend pods crash because they try to connect to PostgreSQL before it's ready.
+
+**Solution:** The chart includes an `initContainer` that waits for PostgreSQL to be ready:
+
+```yaml
+initContainers:
+  - name: wait-for-db
+    image: busybox:1.35
+    command: ['sh', '-c', 'until nc -z db 5432; do echo waiting for postgres...; sleep 2; done;']
+```
+
+### Frontend Cannot Reach Backend
+
+**Problem:** `host not found in upstream "backend"`
+
+**Solution:** Updated `nginx.conf` to use the proper service name:
+
+```nginx
+location /api {
+    proxy_pass http://backend-svc:8000;
+}
+```
+
+The chart uses a `ConfigMap` for nginx configuration:
+
+```yaml
+volumeMounts:
+  - name: nginx-config
+    mountPath: /etc/nginx/conf.d/
+volumes:
+  - name: nginx-config
+    configMap:
+      name: nginx-config
+```
+
+### PostgreSQL Pod Stuck in Pending
+
+**Problem:** `PersistentVolumeClaim bound to non-existent persistentvolume`
+
+**Solution:** Delete the old PVC and let Kubernetes create a new one:
+
+```bash
+kubectl delete pvc postgres-storage-postgres-0 -n project
+kubectl delete pod postgres-0 -n project
+```
+
+The StatefulSet will automatically recreate the pod with a new PVC.
+
+### Check Pod Logs
+
+```bash
+# Check specific pod logs
+kubectl logs -n project <pod-name>
+
+# Watch logs in real-time
+kubectl logs -n project <pod-name> -f
+
+# Check all containers in a pod
+kubectl logs -n project <pod-name> --all-containers
+```
 
 ---
 
 ## 🎯 Learning Outcomes
 
-- Containerized full‑stack application
-- Kubernetes production‑like setup
-- Persistent database handling
-- Secure configuration management
-- Ingress‑based traffic routing
+- ✅ Containerized full-stack application deployment
+- ✅ Kubernetes production-like infrastructure setup
+- ✅ Persistent data management with StatefulSets
+- ✅ Secure configuration using ConfigMaps & Secrets
+- ✅ Service-to-service communication
+- ✅ Init containers for dependency management
+- ✅ Helm charts for package management & templating
+- ✅ Rolling updates and deployment strategies
+- ✅ Pod health checks (liveness & readiness probes)
+- ✅ Resource management and optimization
 
 ---
 
 ## 📌 Notes
 
-- This project is designed for **learning and practice purposes**.
-- Can be extended with:
-  - HPA
-  - Network Policies
-  - Resource Limits
-  - Liveness & Readiness Probes
+- This project is designed for **learning and practice purposes** with a focus on **production-ready patterns**.
+- The Helm chart is **fully parameterized** and can be easily customized for different environments.
+- All services communicate via **service discovery** (DNS-based).
+
+### Future Enhancements
+
+- [ ] Horizontal Pod Autoscaling (HPA)
+- [ ] Network Policies for traffic control
+- [ ] RBAC (Role-Based Access Control)
+- [ ] Monitoring with Prometheus & Grafana
+- [ ] Logging with ELK Stack or Loki
+- [ ] GitOps workflow with ArgoCD
+- [ ] Multi-environment setup (dev, staging, prod)
+
+---
+
+## 📚 Resources
+
+- [Kubernetes Official Docs](https://kubernetes.io/docs/)
+- [Helm Official Docs](https://helm.sh/docs/)
+- [Minikube Getting Started](https://minikube.sigs.k8s.io/)
+- [Docker Documentation](https://docs.docker.com/)
 
 ---
 
 ## 👨‍💻 Author
 
 **Kareem Assem**\
-DevOps Eng
+DevOps Engineer | Kubernetes Specialist
+
+📧 For questions or improvements, feel free to contribute!
+
+---
+
+## 📝 Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | Feb 11, 2026 | Added Helm Chart, fixed init containers, improved troubleshooting |
+| 1.0 | Jan 26, 2026 | Initial project setup with kubectl manifests |
 

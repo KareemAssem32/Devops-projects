@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.frontend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.frontend.name }}
+    spec:
+      containers:
+      - name: {{ .Values.frontend.name }}
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.frontend.port }}
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/
+        {{- if .Values.frontend.resources }}
+        resources:
+          {{- toYaml .Values.frontend.resources | nindent 10 }}
+        {{- end }}
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
