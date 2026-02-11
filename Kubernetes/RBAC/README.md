@@ -1,3 +1,3 @@
 [for test]
 
-kubectl auth can-i get pods --as=<name> -ns <namespace>
+kubectl auth can-i get pods --as=name -ns namespace
